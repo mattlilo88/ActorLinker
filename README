@@ -1,0 +1,71 @@
+README for HW4 CSE101:
+
+Matthew Lo November 2022
+------------------------------------------------------------------------------------------------------------------------------------------
+Code Files: Makefile, sixdegrees.cpp, sixdegrees_functions.cpp, sixdegrees.h
+Test Files: simple-input.txt, simple-output.txt, more-input.txt, more-output.txt, cleaned_movielist.txt
+Student Test Files (Thanks to Andrew Hu): stud-in.txt, stud-out.txt, countlengths.py, diffLines.txt
+https://piazza.com/class/l8dis4kef4h2au/post/671
+------------------------------------------------------------------------------------------------------------------------------------------
+Overview:
+In this homework, the code can be split up into three different files: sixdegrees.cpp, sixdegrees_functions.cpp, sixdegrees.h
+
+My Approach:
+To process the "cleaned_movielist.txt" data, I initialize two unordered_maps, one which stores actors and their respective movies 
+and another one which stores movies and its respective actors. From there I would process each line from the text file, storing 
+the data into the two unordered_maps. Then once all the data is stored into the unordered_maps, I begin processing the given input
+file. Each line of input consists of two possible actor names. I would then find the shortest path possible between actors. If
+a path is found, I write the path to the output file. If a path is not found, I write "Not present" to the output file.
+
+sixdegrees.cpp:
+		In sixdegrees.cpp is where main() is. In main() is where I am storing all the data from "cleaned-movielist.txt" and reading
+		from the input file and writing to the output file. I first check if the user provides three arguments, the executable, the 
+		input file, and the output file. If not, I throw an error. I then open the "cleaned_movelist.txt" file for processing. I create
+		two unordered_maps, one which stores actors and their respective movies (actorMap) and another one which stores movies and its respective
+		actors(movieMap), to store the data from the text file. The two unordered_maps will allow to link from actor to movie to another actor.
+		Then after the two unordered_maps are stored with the data, I begin processing the input file. Each input line consists of two
+		actor names where I need to find the shortest path between the two actors. I first check to see if the given actors actually 
+		exist in the actorMap. If one of the actor does not exist, then I write "Not present" to the output file as a path is not possible.
+		I then check if the given actor names are the same, meaning the path is the actor name itself, so I write the actor name to the output 
+		file. I then call the path() function to return a vector<string> shortPath that contains the shortest path possible between the two given
+		actor. If the shortPath is empty it means a path was not found and write "Not present" to the output file. Otherwise, I write the 
+		returned shortPath to the output file which is the shortest path between the two actors.
+
+sixdegrees_functions.cpp:
+		In sixdegrees_functions.cpp is where I store all the functions dealing with finding the shortest path between two actors.
+
+		vector<string> path(unordered_map<string, set<string>> actorMap, unordered_map<string, set<string>> movieMap, string a1, string a2):
+				In this function is where I run BFS on my two unordered_maps that represent adjacency lists.
+				I first create a queue of vector<string>. The reason for vector<string> is to maintain the paths that are discovered and to 
+				continue to build the paths through BFS. I create an initial path called start that stores the starting actor only and then 
+				push it into the queue for BFS. Then I initialize a set called visisted to keep track of the actor nodes that have already been 
+				visited so I can ignore in BFS. Then I run a while loop that loops through the queue until its empty. In each iteration, I pop 
+				from the queue to get a path to continue to explore. Then I check if the the last actor node in the path is equal to the desired
+				actor. If it is then I return the vector<string> path that contains the shortest path. If not, I access the path's last actor node's 
+				movies and iterate through the movies. With each movie iteration, I also iterate through that movie's actors through the 
+				unordered_map moiveMap. From there I would first check if each actor has been visited or not, in which I ignore the actor. Otherwise
+				I create a new vector<string> copy of the popped path and push_back() the current movie and the current actor to build on
+				the popped path at the current iterations. From there eventually I return the shortest path. If the while loop ends, that means 
+				no path was found and I return an empty vector<string>.
+	
+		string printPath(vector<string> path):
+				In this function is where I print out the vector<string> path. I simply iterate through the given vector<string> path and print out
+				the contents. If the iteration is at an even iteration, then its an actor. If the iteration is at an odd iteration, then its a movie.
+				Depending on the node, I will format the return string accordingly. Then I return the shortest path in the right format.
+
+sixdegrees.h:
+		In sixdegrees.h is where I store the functions declarations from sixdegrees_functions.cpp so I can use in sixdegrees.cpp.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Sources I used for my code:
+
+https://stackoverflow.com/questions/1939953/how-to-find-if-a-given-key-exists-in-a-c-stdmap //Used to check if key exists in a map
+https://stackoverflow.com/questions/5590381/easiest-way-to-convert-int-to-string-in-c //Used to convert a int to a string
+https://www.geeksforgeeks.org/queue-cpp-stl/ //Used to understand how queues work
+https://www.geeksforgeeks.org/stdstring-class-in-c/ //Used to understand how strings work
+https://stackoverflow.com/questions/12702561/iterate-through-a-c-vector-using-a-for-loop //Used to understand how to iterate through a vector
+https://www.geeksforgeeks.org/stringstream-c-applications/ //Used to understand how to use stringstream library in processing user input
+https://cplusplus.com/doc/tutorial/files/ //Used to understand how to stream for input/output files and read files
+Took inspiration from the BFS psuedocode from lecture
+Used similar Makefile from "Hello world, with bells and whistles" codio
+Data structure inspiration from TA Vincent Tan
